@@ -1,5 +1,5 @@
 {
-  "version": "2.3.6",
+  "version": "2.3.7",
   "name": "cordova-plugin-telerik-imagepicker",
   "cordova_name": "ImagePicker",
   "description": "This plugin allows selection of multiple images from the camera roll / gallery in a phonegap app",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Telerik-Verified-Plugins/ImagePicker.git"
+    "url": "git+https://github.com/remoorejr/cordova-plugin-image-picker.git"
   },
   "engines": {
     "name": "cordova",
