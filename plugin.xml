@@ -66,6 +66,8 @@
         <header-file src="src/ios/GMImagePicker/GMPHAsset.h" />
         <source-file src="src/ios/GMImagePicker/GMPHAsset.m" />
 
+        <resource-file src="src/ios/SOSPicker.bundle" />
+
         <resource-file src="src/ios/GMImagePicker/GMEmptyFolder@1x.png" />
         <resource-file src="src/ios/GMImagePicker/GMEmptyFolder@2x.png" />
 
@@ -84,7 +86,7 @@
         <resource-file src="src/ios/GMImagePicker/pt.lproj" />
         <resource-file src="src/ios/GMImagePicker/pl.lproj" />
         <resource-file src="src/ios/GMImagePicker/zh-Hans.lproj" />
-
+        
         <framework src="Accelerate.framework" />
         <framework src="Security.framework" />
         <framework src="Photos.framework" />
