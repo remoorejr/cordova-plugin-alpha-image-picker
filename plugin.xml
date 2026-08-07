@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
   xmlns:android="http://schemas.android.com/apk/res/android"
   id="cordova-plugin-alpha-image-picker"
-  version="2.3.9">
+  version="2.4.0">
 
     <name>ImagePicker</name>
 
@@ -13,7 +13,7 @@
     <license>MIT</license>
 
     <engines>
-        <engine name="cordova" version=">=9.0.0" />
+        <engine name="cordova" version=">=12.0.0" />
     </engines>
 
     <js-module src="www/imagepicker.js" name="ImagePicker">
@@ -29,8 +29,12 @@
         </config-file>
 
         <preference name="PHOTO_LIBRARY_USAGE_DESCRIPTION" default=" " />
+        <preference name="PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION" default=" " />
         <config-file target="*-Info.plist" parent="NSPhotoLibraryUsageDescription">
           <string>$PHOTO_LIBRARY_USAGE_DESCRIPTION</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSPhotoLibraryAddUsageDescription">
+          <string>$PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION</string>
         </config-file>
 
         <header-file src="src/ios/SOSPicker.h" />
@@ -38,7 +42,7 @@
 
         <header-file src="src/ios/GMImagePicker/FeHourGlass.h" />
         <source-file src="src/ios/GMImagePicker/FeHourGlass.m" />
-      
+
         <header-file src="src/ios/GMImagePicker/UIImage+fixOrientation.h" />
         <source-file src="src/ios/GMImagePicker/UIImage+fixOrientation.m" />
 
@@ -86,18 +90,16 @@
         <resource-file src="src/ios/GMImagePicker/pt.lproj" />
         <resource-file src="src/ios/GMImagePicker/pl.lproj" />
         <resource-file src="src/ios/GMImagePicker/zh-Hans.lproj" />
-        
+
         <framework src="Accelerate.framework" />
         <framework src="Security.framework" />
         <framework src="Photos.framework" />
         <framework src="SystemConfiguration.framework" />
         <framework src="QuartzCore.framework" />
-
     </platform>
 
     <!-- android -->
     <platform name="android">
-        <dependency id="cordova-plugin-androidx-adapter" url="https://github.com/dpa99c/cordova-plugin-androidx-adapter.git" />
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="ImagePicker">
                 <param name="android-package" value="com.synconset.ImagePicker"/>
@@ -105,16 +107,23 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <activity android:label="@string/multi_app_name" android:name="com.synconset.MultiImageChooserActivity" android:theme="@style/Theme.AppCompat.Light">
-            </activity>
+            <activity
+                android:label="@string/multi_app_name"
+                android:name="com.synconset.MultiImageChooserActivity"
+                android:theme="@style/Theme.AppCompat.Light" />
         </config-file>
 
+        <!-- API <= 32 -->
         <config-file target="AndroidManifest.xml" parent="/manifest">
-            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
         </config-file>
 
-        <preference name="ANDROID_SUPPORT_V7_VERSION" default="27.+"/>
-        <framework src="com.android.support:appcompat-v7:$ANDROID_SUPPORT_V7_VERSION" />
+        <!-- API 33+ -->
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+        </config-file>
+
+        <framework src="androidx.appcompat:appcompat:1.6.1" />
 
         <source-file src="src/android/com/synconset/ImagePicker/ImagePicker.java" target-dir="src/com/synconset" />
         <source-file src="src/android/com/synconset/ImagePicker/FakeR.java" target-dir="src/com/synconset" />
@@ -143,10 +152,6 @@
         <resource-file src="src/android/Library/res/layout/multiselectorgrid.xml" target="res/layout/multiselectorgrid.xml"/>
         <resource-file src="src/android/Library/res/values/multiimagechooser_strings_en.xml" target="res/values/multiimagechooser_strings_en.xml"/>
 
-        <config-file target="res/values/themes.xml" parent="/resources">
-            <style name="MyTheme" parent="android:Theme.Holo.Light"> </style>
-        </config-file>
-       
         <resource-file src="src/android/Library/res/values-de/multiimagechooser_strings_de.xml" target="res/values-de/multiimagechooser_strings_de.xml"/>
         <resource-file src="src/android/Library/res/values-es/multiimagechooser_strings_es.xml" target="res/values-es/multiimagechooser_strings_es.xml"/>
         <resource-file src="src/android/Library/res/values-fr/multiimagechooser_strings_fr.xml" target="res/values-fr/multiimagechooser_strings_fr.xml"/>
@@ -159,24 +164,5 @@
 
         <framework src="src/android/ignorelinterrors.gradle" custom="true" type="gradleReference"/>
         <framework src="src/android/androidtarget.gradle" custom="true" type="gradleReference"/>
-    </platform>
-
-    <!-- browser -->
-    <platform name="browser">
-      <config-file parent="/*" target="config.xml">
-  				<feature name="ImagePicker">
-  						<param name="browser-package" value="ImagePicker"/>
-  				</feature>
-  		</config-file>
-
-      <!-- Required for browserify: we always link module below as there is conditional reference
-      to this module from requestFileSystem and resolveLocalFileSystemURI modules. -->
-      <js-module src="www/browser/isChrome.js" name="isChrome">
-          <runs />
-      </js-module>
-
-  		<js-module src="src/browser/ImagePicker.js" name="ImagePickerProxy">
-  				<runs/>
-  		</js-module>
     </platform>
 </plugin>
