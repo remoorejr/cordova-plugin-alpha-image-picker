@@ -1,11 +1,19 @@
 {
-  "version": "2.3.9",
   "name": "cordova-plugin-alpha-image-picker",
+  "version": "2.4.0",
   "cordova_name": "ImagePicker",
-  "description": "This plugin allows selection of multiple images from the camera roll / gallery in a phonegap app",
+  "description": "Cordova plugin for selecting multiple images from the photo library with modern Android/iOS compatibility.",
   "license": "MIT",
   "issue": "",
-  "keywords": [],
+  "keywords": [
+    "cordova",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "image",
+    "picker",
+    "photos"
+  ],
   "platforms": [
     "android",
     "ios"
@@ -14,8 +22,7 @@
     "id": "cordova-plugin-alpha-image-picker",
     "platforms": [
       "ios",
-      "android",
-      "wp8"
+      "android"
     ]
   },
   "repository": {
@@ -23,7 +30,8 @@
     "url": "git+https://github.com/remoorejr/cordova-plugin-alpha-image-picker.git"
   },
   "engines": {
-    "name": "cordova",
-    "version": ">=9.0.0"
+    "cordova": ">=12.0.0",
+    "cordova-android": ">=12.0.0",
+    "cordova-ios": ">=7.0.0"
   }
 }
