@@ -461,30 +461,32 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
         [ ph_options setDeliveryMode: PHImageRequestOptionsDeliveryModeHighQualityFormat ]; // Best Quality
 
         [ ph_options setProgressHandler:^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
-            
+
             fetch_item.percent = progress;
-            
-            GMGridViewCell *cell = (GMGridViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
-            
-            if ( cell ) {
-                [ cell set_progress:progress animated:false];
-            }
-            
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                GMGridViewCell *cell = (GMGridViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
+
+                if ( cell ) {
+                    [ cell set_progress:progress animated:false];
+                }
+            });
+
         }];
         
         
             
         [ self.imageManager requestImageForAsset:asset targetSize:PHImageManagerMaximumSize contentMode:PHImageContentModeDefault options:ph_options resultHandler:^(UIImage *result, NSDictionary *info) {
-            
-            //dispatch_async(dispatch_get_main_queue(), ^{
-            
-            GMGridViewCell *cell = (GMGridViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
-            
-            if ( cell ) {
-                [cell hide_progress];
-                [cell show_fetching];
-            }
-            
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                GMGridViewCell *cell = (GMGridViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
+
+                if ( cell ) {
+                    [cell hide_progress];
+                    [cell show_fetching];
+                }
+            });
+
             fetch_item.be_progressed = false;
             fetch_item.be_finished = true;
             
