@@ -11,10 +11,10 @@
 
 @implementation PHAsset (GMPHAsset)
 
-ADD_DYNAMIC_PROPERTY(NSNumber *,cell,setCell);
-ADD_DYNAMIC_PROPERTY(NSNumber *,be_progressed,setBe_progressed);
-ADD_DYNAMIC_PROPERTY(NSNumber *,be_finished,setBe_finished);
-ADD_DYNAMIC_PROPERTY(NSNumber *,percent,setPercent);
+ADD_DYNAMIC_PROPERTY(id,cell,setCell);
+ADD_DYNAMIC_PROPERTY_COPY(NSNumber *,be_progressed,setBe_progressed);
+ADD_DYNAMIC_PROPERTY_COPY(NSNumber *,be_finished,setBe_finished);
+ADD_DYNAMIC_PROPERTY_COPY(NSNumber *,percent,setPercent);
 ADD_DYNAMIC_PROPERTY(UIImage *,image_fullsize,setImage_fullsize);
 ADD_DYNAMIC_PROPERTY(UIImage *,image_thumb,setImage_thumb);
 

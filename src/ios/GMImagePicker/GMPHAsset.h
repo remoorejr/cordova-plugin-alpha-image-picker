@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Guillermo Muntaner Perelló. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
+
 #define ADD_DYNAMIC_PROPERTY(PROPERTY_TYPE,PROPERTY_NAME,SETTER_NAME) \
 @dynamic PROPERTY_NAME ; \
 static char kProperty##PROPERTY_NAME; \
@@ -16,7 +18,20 @@ return ( PROPERTY_TYPE ) objc_getAssociatedObject(self, &(kProperty##PROPERTY_NA
 \
 - (void) SETTER_NAME :( PROPERTY_TYPE ) PROPERTY_NAME \
 { \
-objc_setAssociatedObject(self, &kProperty##PROPERTY_NAME , PROPERTY_NAME , OBJC_ASSOCIATION_RETAIN); \
+objc_setAssociatedObject(self, &kProperty##PROPERTY_NAME , PROPERTY_NAME , OBJC_ASSOCIATION_RETAIN_NONATOMIC); \
+} \
+
+#define ADD_DYNAMIC_PROPERTY_COPY(PROPERTY_TYPE,PROPERTY_NAME,SETTER_NAME) \
+@dynamic PROPERTY_NAME ; \
+static char kProperty##PROPERTY_NAME##Copy; \
+- ( PROPERTY_TYPE ) PROPERTY_NAME \
+{ \
+return ( PROPERTY_TYPE ) objc_getAssociatedObject(self, &(kProperty##PROPERTY_NAME##Copy ) ); \
+} \
+\
+- (void) SETTER_NAME :( PROPERTY_TYPE ) PROPERTY_NAME \
+{ \
+objc_setAssociatedObject(self, &kProperty##PROPERTY_NAME##Copy , PROPERTY_NAME , OBJC_ASSOCIATION_COPY_NONATOMIC); \
 } \
 
 #import <objc/runtime.h>
@@ -26,11 +41,12 @@ objc_setAssociatedObject(self, &kProperty##PROPERTY_NAME , PROPERTY_NAME , OBJC_
 @interface PHAsset (GMPHAsset)
 
 
-@property (nonatomic, assign) id cell;
-@property (nonatomic, assign) NSNumber *be_progressed;
-@property (nonatomic, assign) NSNumber *be_finished;
-@property (nonatomic, assign) NSNumber *percent;
+@property (nonatomic, weak) id cell;
+@property (nonatomic, copy) NSNumber *be_progressed;
+@property (nonatomic, copy) NSNumber *be_finished;
+@property (nonatomic, copy) NSNumber *percent;
 @property (nonatomic, strong) UIImage * image_fullsize;
 @property (nonatomic, strong) UIImage * image_thumb;
 
 @end
+

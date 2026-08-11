@@ -75,14 +75,14 @@
 - (void)setupNavigationController
 {
     GMAlbumsViewController *albumsViewController = [[GMAlbumsViewController alloc] init:_allow_video];
-    _navigationController = [[UINavigationController alloc] initWithRootViewController:albumsViewController];
-    _navigationController.delegate = self;
+    _embeddedNavigationController = [[UINavigationController alloc] initWithRootViewController:albumsViewController];
+    _embeddedNavigationController.delegate = self;
     
-    [_navigationController willMoveToParentViewController:self];
-    [_navigationController.view setFrame:self.view.frame];
-    [self.view addSubview:_navigationController.view];
-    [self addChildViewController:_navigationController];
-    [_navigationController didMoveToParentViewController:self];
+    [_embeddedNavigationController willMoveToParentViewController:self];
+    [_embeddedNavigationController.view setFrame:self.view.frame];
+    [self.view addSubview:_embeddedNavigationController.view];
+    [self addChildViewController:_embeddedNavigationController];
+    [_embeddedNavigationController didMoveToParentViewController:self];
 }
 
 #pragma mark - Select / Deselect Asset
@@ -234,3 +234,4 @@
 
 
 @end
+

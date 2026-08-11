@@ -6,7 +6,8 @@
 //  Copyright (c) 2014 Guillermo Muntaner Perelló. All rights reserved.
 //
 
-
+#import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 #import <Photos/Photos.h>
 
 
@@ -31,3 +32,4 @@
 
 - (void)setVideoLayout:(BOOL)isVideo;
 @end
+

@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Guillermo Muntaner Perelló. All rights reserved.
 //
 
-
+#import <UIKit/UIKit.h>
 #import <Photos/Photos.h>
 
 #import "GMFetchItem.h"
@@ -81,7 +81,7 @@ static CGSize const kPopoverContentSize = {480, 720};
 @property (nonatomic) double minimumInteritemSpacing;
 
 
-@property (nonatomic, strong) UINavigationController *navigationController;
+@property (nonatomic, strong) UINavigationController *embeddedNavigationController;
 
 /**
  *  Managing Asset Selection
