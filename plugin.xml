@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
   xmlns:android="http://schemas.android.com/apk/res/android"
   id="cordova-plugin-alpha-image-picker"
-  version="2.4.0">
+  version="2.4.1-dev">
 
     <name>ImagePicker</name>
 
@@ -115,11 +115,6 @@
                 android:name="com.synconset.MultiImageChooserActivity"
                 android:label="@string/multi_app_name"
                 android:theme="@style/Theme.AppCompat.Light" />
-        </config-file>
-
-        <!-- Android <= 12L -->
-        <config-file target="AndroidManifest.xml" parent="/manifest">
-            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
         </config-file>
 
         <!-- Android 13+ -->
