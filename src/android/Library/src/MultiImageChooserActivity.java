@@ -131,6 +131,8 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
         progress.setTitle(getString(fakeR.getId("string", "multi_image_picker_processing_images_title")));
         progress.setMessage(getString(fakeR.getId("string", "multi_image_picker_processing_images_message")));
 
+        setupHeader();
+
         ArrayList<Uri> selectedUris = getIntent().getParcelableArrayListExtra(SELECTED_URIS_KEY);
         if (selectedUris != null) {
             for (Uri uri : selectedUris) {
@@ -177,7 +179,6 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
         getLoaderManager().initLoader(CURSORLOADER_THUMBS, null, this);
         getLoaderManager().initLoader(CURSORLOADER_REAL, null, this);
 
-        setupHeader();
         updateAcceptButton();
     }
 

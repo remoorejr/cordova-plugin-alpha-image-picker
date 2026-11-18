@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- Prevented an Android Photo Picker crash by initializing the processing activity's action-bar controls before processing selected images.
+
 ## [2.4.0] - 2026-08-07
 
 ### Added
