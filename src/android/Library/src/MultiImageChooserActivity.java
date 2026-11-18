@@ -85,6 +85,7 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
     public static final String HEIGHT_KEY = "HEIGHT";
     public static final String QUALITY_KEY = "QUALITY";
     public static final String OUTPUT_TYPE_KEY = "OUTPUT_TYPE";
+    public static final String SELECTED_URIS_KEY = "SELECTED_URIS";
 
     private static final int CURSORLOADER_THUMBS = 0;
     private static final int CURSORLOADER_REAL = 1;
@@ -94,7 +95,7 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
     private int image_column_index, image_column_orientation, actual_image_id_column_index, orientation_column_index;
     private int colWidth;
 
-    private final Map<Long, Integer> selectedItems = new HashMap<>();
+    private final Map<Uri, Integer> selectedItems = new HashMap<>();
     private final SparseBooleanArray checkStatus = new SparseBooleanArray();
 
     private int maxImages;
@@ -125,6 +126,19 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
         quality = getIntent().getIntExtra(QUALITY_KEY, 100);
         maxImageCount = maxImages;
         outputType = OutputType.fromValue(getIntent().getIntExtra(OUTPUT_TYPE_KEY, 0));
+
+        progress = new ProgressDialog(this);
+        progress.setTitle(getString(fakeR.getId("string", "multi_image_picker_processing_images_title")));
+        progress.setMessage(getString(fakeR.getId("string", "multi_image_picker_processing_images_message")));
+
+        ArrayList<Uri> selectedUris = getIntent().getParcelableArrayListExtra(SELECTED_URIS_KEY);
+        if (selectedUris != null) {
+            for (Uri uri : selectedUris) {
+                selectedItems.put(uri, 0);
+            }
+            selectClicked();
+            return;
+        }
 
         Display display = getWindowManager().getDefaultDisplay();
         int width = display.getWidth();
@@ -165,10 +179,6 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
 
         setupHeader();
         updateAcceptButton();
-
-        progress = new ProgressDialog(this);
-        progress.setTitle(getString(fakeR.getId("string", "multi_image_picker_processing_images_title")));
-        progress.setMessage(getString(fakeR.getId("string", "multi_image_picker_processing_images_message")));
     }
 
     @Override
@@ -194,7 +204,10 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                     .show();
 
         } else if (isChecked) {
-            selectedItems.put(mediaId, rotation);
+            selectedItems.put(
+                    ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, mediaId),
+                    rotation
+            );
 
             if (maxImageCount == 1) {
                 selectClicked();
@@ -389,22 +402,21 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
         }
     }
 
-    private class ResizeImagesTask extends AsyncTask<Set<Entry<Long, Integer>>, Void, ArrayList<String>> {
+    private class ResizeImagesTask extends AsyncTask<Set<Entry<Uri, Integer>>, Void, ArrayList<String>> {
         private Exception asyncTaskError = null;
 
         @Override
-        protected ArrayList<String> doInBackground(Set<Entry<Long, Integer>>... itemSets) {
-            Set<Entry<Long, Integer>> items = itemSets[0];
+        protected ArrayList<String> doInBackground(Set<Entry<Uri, Integer>>... itemSets) {
+            Set<Entry<Uri, Integer>> items = itemSets[0];
             ArrayList<String> results = new ArrayList<>();
 
             try {
-                Iterator<Entry<Long, Integer>> i = items.iterator();
+                Iterator<Entry<Uri, Integer>> i = items.iterator();
                 while (i.hasNext()) {
-                    Entry<Long, Integer> item = i.next();
-                    long mediaId = item.getKey();
+                    Entry<Uri, Integer> item = i.next();
+                    Uri imageUri = item.getKey();
                     int rotate = item.getValue();
 
-                    Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, mediaId);
                     BitmapFactory.Options bounds = new BitmapFactory.Options();
                     bounds.inJustDecodeBounds = true;
                     decodeUri(imageUri, bounds);
@@ -425,7 +437,7 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
                     Bitmap bmp = tryToGetBitmap(imageUri, opts, rotate, scale < 1);
 
                     if (outputType == OutputType.FILE_URI) {
-                        File file = storeImage(bmp, "picked_" + mediaId + ".jpg");
+                        File file = storeImage(bmp, "picked_" + results.size() + ".jpg");
                         results.add(Uri.fromFile(file).toString());
                     } else {
                         results.add(getBase64OfImage(bmp));

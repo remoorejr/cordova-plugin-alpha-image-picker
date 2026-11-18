@@ -83,16 +83,20 @@ window.imagePicker.getPictures(
 
 When outputType is FILE_URI the plugin returns images that are stored in a temporary directory. These images will often not be deleted automatically though. The files should be moved or deleted after you get their filepaths in javascript. If Base64 Strings are being returned, there is nothing to clean up.
 
-## Android 6 (M) Permissions
+## Android Permissions
 
-On Android 6 you need to request permission to read external storage at runtime when targeting API level 23+.
-Even if the `uses-permission` tags for the Calendar are present in `AndroidManifest.xml`.
+On Android 13 and later, image selection uses the system Photo Picker, so the app does not need broad photo-library permission. On Android 12 and earlier, the plugin uses its built-in gallery picker and requests storage permission when needed.
+
+### Android 6 (M) through Android 12 legacy picker permissions
+
+On Android 6 through 12, the legacy picker requests permission to read external storage at runtime when targeting API level 23+, even if the `uses-permission` tags for external storage are present in `AndroidManifest.xml`.
 
 Note that the `hasReadPermission` function will return true when:
 
 - You're running this on iOS, or
 - You're targeting an API level lower than 23, or
 - You're using Android < 6, or
+- You're using Android 13 or later, where the system Photo Picker does not require broad photo-library permission, or
 - You've already granted permission.
 
 ```js
@@ -109,8 +113,8 @@ function requestReadPermission() {
 }
 ```
 
-Note that backward compatibility was added by checking for read permission automatically when `getPictures` is called.
-If permission is needed the plugin will now show the permission request popup.
+On Android 12 and earlier, backward compatibility was added by checking for read permission automatically when `getPictures` is called.
+If permission is needed, the plugin will show the permission request popup.
 The user will then need to allow access and invoke the same method again after doing so.
 
 ## iOS Privacy Manifest

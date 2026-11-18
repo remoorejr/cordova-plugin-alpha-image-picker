@@ -7,8 +7,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
@@ -33,9 +35,10 @@ public class ImagePicker extends CordovaPlugin {
 
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final int PICKER_REQUEST_CODE = 1001;
-
+    private static final int PHOTO_PICKER_REQUEST_CODE = 1002;
     private CallbackContext callbackContext;
     private Intent pendingImagePickerIntent;
+    private Intent pendingImageProcessingIntent;
     private boolean launchPickerAfterPermissionGrant = false;
 
     @Override
@@ -71,6 +74,28 @@ public class ImagePicker extends CordovaPlugin {
             imagePickerIntent.putExtra("QUALITY", quality);
             imagePickerIntent.putExtra("OUTPUT_TYPE", outputType);
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (max == 0) {
+                    callbackContext.success(new JSONArray());
+                    return true;
+                }
+
+                Intent photoPickerIntent;
+                if (max == 1) {
+                    photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                } else {
+                    photoPickerIntent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                    int maxCount = max < 0 ? MediaStore.getPickImagesMaxLimit()
+                            : Math.min(max, MediaStore.getPickImagesMaxLimit());
+                    maxCount = Math.max(2, maxCount);
+                    photoPickerIntent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, maxCount);
+                }
+                photoPickerIntent.setType("image/*");
+                pendingImageProcessingIntent = imagePickerIntent;
+                cordova.startActivityForResult(this, photoPickerIntent, PHOTO_PICKER_REQUEST_CODE);
+                return true;
+            }
+
             if (hasReadPermission()) {
                 Log.d(TAG, "Permission already granted. Launching picker.");
                 cordova.startActivityForResult(this, imagePickerIntent, PICKER_REQUEST_CODE);
@@ -87,13 +112,11 @@ public class ImagePicker extends CordovaPlugin {
     }
 
     private String getReadPermission() {
-        if (Build.VERSION.SDK_INT >= 33) {
-            return Manifest.permission.READ_MEDIA_IMAGES;
-        }
         return Manifest.permission.READ_EXTERNAL_STORAGE;
     }
 
     private boolean hasReadPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) return true;
         if (Build.VERSION.SDK_INT < 23) return true;
         return PackageManager.PERMISSION_GRANTED ==
                 ContextCompat.checkSelfPermission(cordova.getActivity(), getReadPermission());
@@ -169,6 +192,46 @@ public class ImagePicker extends CordovaPlugin {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PHOTO_PICKER_REQUEST_CODE) {
+            if (callbackContext == null) {
+                Log.e(TAG, "callbackContext is null in photo picker result");
+                return;
+            }
+
+            Intent processingIntent = pendingImageProcessingIntent;
+            pendingImageProcessingIntent = null;
+            if (resultCode != Activity.RESULT_OK || data == null) {
+                callbackContext.success(new JSONArray());
+                return;
+            }
+
+            ArrayList<Uri> selectedUris = new ArrayList<>();
+            if (data.getClipData() != null) {
+                for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+                    Uri uri = data.getClipData().getItemAt(i).getUri();
+                    if (uri != null) selectedUris.add(uri);
+                }
+            } else if (data.getData() != null) {
+                selectedUris.add(data.getData());
+            }
+
+            if (selectedUris.isEmpty()) {
+                callbackContext.success(new JSONArray());
+                return;
+            }
+
+            if (processingIntent == null) {
+                callbackContext.error("Image processing options are unavailable");
+                return;
+            }
+            processingIntent.putParcelableArrayListExtra(
+                    MultiImageChooserActivity.SELECTED_URIS_KEY,
+                    selectedUris
+            );
+            cordova.startActivityForResult(this, processingIntent, PICKER_REQUEST_CODE);
+            return;
+        }
+
         if (requestCode != PICKER_REQUEST_CODE) {
             Log.d(TAG, "Ignoring onActivityResult requestCode=" + requestCode);
             return;
