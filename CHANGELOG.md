@@ -4,6 +4,13 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+- Android 13+ image selection through the system Photo Picker, with selected images continuing through the plugin's resize and output processing.
+
+### Changed
+- Android 13+ no longer requires the broad `READ_MEDIA_IMAGES` permission. Android 12 and earlier continue to use the built-in gallery picker and request storage permission when needed.
+- Android Photo Picker selections honor `maximumImagesCount` up to the device's supported selection limit.
+
 ### Fixed
 - Prevented an Android Photo Picker crash by initializing the processing activity's action-bar controls before processing selected images.
 

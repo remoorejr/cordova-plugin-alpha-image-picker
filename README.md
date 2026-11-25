@@ -3,7 +3,7 @@
 Cordova Plugin For Multiple Image Selection - implemented for iOS and Android 4.0 and above.
 Modified for use with Alpha Anywhere
 
-v2.4.0 - revised 08/12/2026
+v2.4.2-dev
 
 ## Installing the plugin
 
@@ -85,7 +85,9 @@ When outputType is FILE_URI the plugin returns images that are stored in a tempo
 
 ## Android Permissions
 
-On Android 13 and later, image selection uses the system Photo Picker, so the app does not need broad photo-library permission. On Android 12 and earlier, the plugin uses its built-in gallery picker and requests storage permission when needed.
+On Android 13 and later, image selection uses Android's system image chooser, so the app does not need broad photo-library permission. Multiple-image selections use the system Photo Picker; the requested `maximumImagesCount` is limited to the maximum supported by the device. A count of `1` opens the single-image chooser, and a count of `0` returns an empty result without opening the chooser. Selected images still go through the plugin's resize and output processing.
+
+On Android 12 and earlier, the plugin uses its built-in gallery picker and requests storage permission when needed.
 
 ### Android 6 (M) through Android 12 legacy picker permissions
 
@@ -96,7 +98,7 @@ Note that the `hasReadPermission` function will return true when:
 - You're running this on iOS, or
 - You're targeting an API level lower than 23, or
 - You're using Android < 6, or
-- You're using Android 13 or later, where the system Photo Picker does not require broad photo-library permission, or
+- You're using Android 13 or later, where the system image chooser does not require broad photo-library permission, or
 - You've already granted permission.
 
 ```js
@@ -113,9 +115,7 @@ function requestReadPermission() {
 }
 ```
 
-On Android 12 and earlier, backward compatibility was added by checking for read permission automatically when `getPictures` is called.
-If permission is needed, the plugin will show the permission request popup.
-The user will then need to allow access and invoke the same method again after doing so.
+On Android 12 and earlier, the plugin checks read permission automatically when `getPictures` is called. If permission is needed, it shows the permission request popup; after granting access, invoke `getPictures` again.
 
 ## iOS Privacy Manifest
 
