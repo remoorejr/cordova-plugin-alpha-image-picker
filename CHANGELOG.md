@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file.
 
-## [v2.4.2-dev]
+## [v2.4.2] - 11-25-2026
 
 ### Added
 - Android 13+ image selection through the system Photo Picker, with selected images continuing through the plugin's resize and output processing.
@@ -14,7 +14,7 @@ All notable changes to this project are documented in this file.
 ### Fixed
 - Prevented an Android Photo Picker crash by initializing the processing activity's action-bar controls before processing selected images.
 
-## [2.4.0] - 2026-08-07
+## [2.4.0] - 07-08-2026
 
 ### Added
 - Android 13+ media permission support (`READ_MEDIA_IMAGES`).
