@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file.
 
-## [Unreleased]
+## [v2.4.2-dev]
 
 ### Added
 - Android 13+ image selection through the system Photo Picker, with selected images continuing through the plugin's resize and output processing.
